@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="deploymentTargetDropDown">
+    <value>
+      <entry key="TestImageProcessing">
+        <State />
+      </entry>
+      <entry key="app">
+        <State />
+      </entry>
+      <entry key="test_convert_bitmap_to_byte_buffer()">
+        <State />
+      </entry>
+      <entry key="test_convert_bitmap_to_byte_buffer_not_return_minus()">
+        <State />
+      </entry>
+      <entry key="test_convert_bitmap_to_byte_buffer_time_milisecond()">
+        <State />
+      </entry>
+      <entry key="test_execute_async_success()">
+        <State />
+      </entry>
+    </value>
+  </component>
+</project>
