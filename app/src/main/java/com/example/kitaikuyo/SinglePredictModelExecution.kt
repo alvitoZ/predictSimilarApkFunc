@@ -17,7 +17,10 @@ import kotlin.math.sqrt
 import kotlin.math.pow
 
 
-class MultiplePredictModelExecution(val interpreter: Interpreter?, var interpreterIsInitialized:Boolean) {
+class SinglePredictModelExecution(
+    val interpreter: Interpreter?,
+    var interpreterIsInitialized: Boolean
+) {
 
     private var imageProcessing: ImageProcessing = ImageProcessing()
 
@@ -26,9 +29,7 @@ class MultiplePredictModelExecution(val interpreter: Interpreter?, var interpret
 
     /** Executor to run inference task in the background */
     private val executorService: ExecutorService = Executors.newSingleThreadExecutor()
-
-
-    private fun cosineSim1(vector1:FloatArray, vector2:FloatArray):Float{
+    private fun cosineSim1(vector1: FloatArray, vector2: FloatArray): Float {
         var sum = 0.0f
         var suma1 = 0.0f
         var suma2 = 0.0f
@@ -36,7 +37,7 @@ class MultiplePredictModelExecution(val interpreter: Interpreter?, var interpret
 //        var zipped: List<Pair<Float, Float>> = vector1 zip vector2
         var zipped: List<Pair<Float, Float>> = vector1.zip(vector2)
 
-        for ((i,j) in zipped){
+        for ((i, j) in zipped) {
             suma1 += i * j
             suma2 += j * j
             sum += i * j
@@ -47,12 +48,12 @@ class MultiplePredictModelExecution(val interpreter: Interpreter?, var interpret
 
     }
 
-    private fun cosineSim2(vector1:FloatArray, vector2:FloatArray):Float{
+    private fun cosineSim2(vector1: FloatArray, vector2: FloatArray): Float {
         var dotProduct = 0.0
         var normVector1 = 0.0
         var normVector2 = 0.0
 
-        for (i in vector1.indices){
+        for (i in vector1.indices) {
             dotProduct += vector1[i] * vector2[i]
             normVector1 += vector1[i] * vector1[i]
             normVector2 += vector2[i] * vector2[i]
@@ -63,13 +64,13 @@ class MultiplePredictModelExecution(val interpreter: Interpreter?, var interpret
         return similarity.toFloat()
     }
 
-    private fun cosineSim3(vector1:FloatArray, vector2:FloatArray):Float{
+    private fun cosineSim3(vector1: FloatArray, vector2: FloatArray): Float {
         var dotProduct = 0.0
         var normVector1 = 0.0
         var normVector2 = 0.0
         var int = vector1.size - 1
 
-        for (i in 0..int){
+        for (i in 0..int) {
             dotProduct += vector1[i] * vector2[i]
             normVector1 += vector1[i].pow(2)
             normVector2 += vector2[i].pow(2)
@@ -80,16 +81,15 @@ class MultiplePredictModelExecution(val interpreter: Interpreter?, var interpret
     }
 
 
-    fun cosineSim4(vector1:FloatArray, vector2:FloatArray):Float{
+    fun cosineSim4(vector1: FloatArray, vector2: FloatArray): Float {
         var dotProduct = 0.0;
         var magnitude1 = 0.0;
         var magnitude2 = 0.0;
         var cosineSimilarity = 0.0;
 
-        var int = vector1.size -1
+        var int = vector1.size - 1
 
-        for ( i in 0..int)
-        {
+        for (i in 0..int) {
             dotProduct += vector1[i] * vector2[i];  //a.b
             magnitude1 += vector1[i].pow(2);  //(a^2)
             magnitude2 += vector2[i].pow(2); //(b^2)
@@ -100,14 +100,13 @@ class MultiplePredictModelExecution(val interpreter: Interpreter?, var interpret
 
         if (magnitude1 != 0.0 || magnitude2 != 0.0) {
             cosineSimilarity = dotProduct / (magnitude1 * magnitude2)
-        }
-        else {
+        } else {
             return 0.0f
         }
         return cosineSimilarity.toFloat();
     }
 
-    private fun byteBufferToFloatArray(byteBuffer: ByteBuffer):FloatArray{
+    private fun byteBufferToFloatArray(byteBuffer: ByteBuffer): FloatArray {
         byteBuffer.rewind()
         var floatBuffer: FloatBuffer = byteBuffer.asFloatBuffer()
         var floatArray = FloatArray(floatBuffer.remaining())
@@ -144,8 +143,7 @@ class MultiplePredictModelExecution(val interpreter: Interpreter?, var interpret
         //will adding try catch block
         try {
             interpreter?.run(inputBuffer, outputBuffer)
-        }
-        catch (e:IllegalThreadStateException){
+        } catch (e: IllegalThreadStateException) {
             throw IllegalThreadStateException("failed to run interpreter $e")
         }
         //in here later
@@ -158,41 +156,49 @@ class MultiplePredictModelExecution(val interpreter: Interpreter?, var interpret
         return outputBuffer
     }
 
-    private fun predictMultiple(assetManager: AssetManager, filePath: String, folderDir: MutableList<String>, folderPath:String):MutableList<Result>{
-        var list = mutableListOf<Result>()
+    private fun predictSingle(
+        assetManager: AssetManager,
+        filePath1: String,
+        filePath2: String
+    ): Result {
+        Log.d("COBATRED", "${Thread.currentThread().name}")
 
-        for (image in folderDir){
-            Log.d("COBATRED", "${Thread.currentThread().name}")
-            list.add(
-                Result(
-                    cosineSim1(
-                        byteBufferToFloatArray(
-                            execute(imageProcessing.loadImageAsBitmap(assetManager, filePath))
-                        ),
-                        byteBufferToFloatArray(
-                            execute(imageProcessing.loadImageAsBitmap(assetManager,"$folderPath/$image"))
-                        ),
-                    ),
-                    image
-                )
-            )
-        }
+        val result = Result(
+            cosineSim1(
+                byteBufferToFloatArray(
+                    execute(imageProcessing.loadImageAsBitmap(assetManager, filePath1))
+                ),
+                byteBufferToFloatArray(
+                    execute(imageProcessing.loadImageAsBitmap(assetManager, filePath2))
+                ),
+            ),
+            filePath1
+        )
 
-        return list
+        return result
     }
 
-    fun executeAsync(context: Context ,filePath: String, folderDir: MutableList<String>, folderPath:String): Task<ExecutionResult> {
-        val task = TaskCompletionSource<ExecutionResult>()
+    fun executeAsync(
+        context: Context,
+        filePath: String,
+        filePath2: String
+    ): Task<ExecutionResult2> {
+        val task = TaskCompletionSource<ExecutionResult2>()
         // i will delete
-        bitmapResize = Bitmap.createScaledBitmap(imageProcessing.loadImageAsBitmap(context.assets, filePath), INPUT_SIZE, INPUT_SIZE, true)
+        bitmapResize = Bitmap.createScaledBitmap(
+            imageProcessing.loadImageAsBitmap(context.assets, filePath),
+            INPUT_SIZE,
+            INPUT_SIZE,
+            true
+        )
 //        val buffer: ByteBuffer = execute(bitmapResize)
 //        val result2: Bitmap = imageProcessing.bytebufferToBitmap(buffer)
         // this later
         executorService.execute {
 
-            val result = predictMultiple(context.assets ,filePath, folderDir, folderPath)
+            val result = predictSingle(context.assets, filePath, filePath2)
             task.setResult(
-                ExecutionResult(
+                ExecutionResult2(
                     result,
                     bitmapResize
                 )
@@ -203,9 +209,9 @@ class MultiplePredictModelExecution(val interpreter: Interpreter?, var interpret
     }
 
     companion object {
-        private const val FAILED_TAG = "FailedMultiplePredictModelExecution"
-        private const val SUCCESS_TAG = "SuccessMultiplePredictModelExecution"
-        private const val TAG = "MultiplePredictModelExecution"
+        private const val FAILED_TAG = "FailedSinglePredictModelExecution"
+        private const val SUCCESS_TAG = "SuccessSinglePredictModelExecution"
+        private const val TAG = "SinglePredictModelExecution"
         private const val INPUT_SIZE = InputModelSize.INPUT_SIZE
         private const val OUTPUT_SIZE = InputModelSize.OUTPUT_SIZE
         private const val FLOAT_TYPE_SIZE = InputModelSize.FLOAT_TYPE_SIZE

@@ -12,13 +12,7 @@ import java.nio.FloatBuffer
 import kotlin.system.measureTimeMillis
 
 
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
-
-class TestImageProcessing {
+class ImageProcessingTest {
 
     @Test
     fun `use_app_context`() {

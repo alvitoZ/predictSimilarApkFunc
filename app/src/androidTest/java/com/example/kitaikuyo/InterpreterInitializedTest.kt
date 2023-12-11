@@ -4,11 +4,10 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.example.kitaikuyo.utils.InterpreterInitialized
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import kotlin.system.measureNanoTime
 import kotlin.system.measureTimeMillis
 
 
-class TestInterpreterInitialized {
+class InterpreterInitializedTest {
     @Test
     fun `use_app_context`() {
         // Context of the app under test.

@@ -11,30 +11,19 @@ import java.nio.ByteBuffer
 ////    val inputBufferString:String
 //)
 
-data class Result(
+ data class Result(
     val float: Float,
-    val string: String
+    val string: String,
 )
 
 data class ExecutionResult (
-    val bitmapResize:Bitmap,
-//    val outputBufferString:String,
-    val outputBuffer:ByteBuffer,
-    val multiplePredictResult:MutableList<Any>
-//    val multiplePredictResult:MutableList<Double>
-//    val maskOnlyBitmap:Bitmap,
-//    val inputBufferString:String
-)
-
-data class ExecutionResultClassify (
-    val bitmapResize:Bitmap,
-//    val outputBufferString:String,
-    val outputBuffer:ByteBuffer,
-//    val maskOnlyBitmap:Bitmap,
-//    val inputBufferString:String
+    val multiplePredictResult:MutableList<Result>,
+    val bitmapResize: Bitmap,
+//    val byteBufferToBitmap: Bitmap
 )
 
 data class ExecutionResult2 (
-    val multiplePredictResult:MutableList<Result>,
-    val bitmapResize: Bitmap
+    val singlePredictResult:Result,
+    val bitmapResize: Bitmap,
+//    val byteBufferToBitmap: Bitmap
 )

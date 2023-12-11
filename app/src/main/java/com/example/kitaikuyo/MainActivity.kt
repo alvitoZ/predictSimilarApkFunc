@@ -99,6 +99,6 @@ class MainActivity : AppCompatActivity() {
         private const val SUCCESS_TAG = "SuccessMainActivity"
         private const val TAGINPUT = "KITAN"
         private const val TAGOUTPUT = "IKUYO"
-        private const val FOLDER_PATH = "predict"
+        private const val FOLDER_PATH = "predict2"
     }
 }

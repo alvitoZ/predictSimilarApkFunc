@@ -3,10 +3,15 @@ package com.example.kitaikuyo.utils
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.Matrix
+import android.graphics.RectF
+import com.example.kitaikuyo.InputModelSize
 import java.io.IOException
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import kotlin.random.Random
 
 
 class ImageProcessing {
@@ -34,6 +39,27 @@ class ImageProcessing {
         return inputBuffer
     }
 
+    fun bytebufferToBitmap(output: ByteBuffer): Bitmap {
+        var value = 30
+        var value2 = 224
+        output?.rewind() // Rewind the output buffer after running.
+
+        val bitmap = Bitmap.createBitmap(value2, value2, Bitmap.Config.ARGB_8888)
+        val pixels = IntArray(value2 * value2) // Set your expected output's height and width
+        for (i in 0 until 224 * 224) {
+//        for (i in 0 until value * value) {
+            val a = 0xFF
+            val r: Float = output?.float!! * 255.0f
+            val g: Float = output?.float!! * 255.0f
+            val b: Float = output?.float!! * 255.0f
+            pixels[i] = a shl 24 or (r.toInt() shl 16) or (g.toInt() shl 8) or b.toInt()
+        }
+        bitmap.setPixels(pixels, 0, value2, 0, 0, value2, value2)
+
+        return bitmap
+    }
+
+
     fun loadImageAsBitmap(assetmanager: AssetManager, image: String): Bitmap {
         val inputstream: InputStream
         try {
@@ -45,10 +71,6 @@ class ImageProcessing {
         return BitmapFactory.decodeStream(inputstream)
     }
 
-    fun coba(value:Int):Int{
-        return value+ value
-
-    }
 
     fun createEmptyBitmap(imageWidth: Int, imageHeight: Int, color: Int = 0): Bitmap {
         val ret = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.RGB_565)
@@ -58,14 +80,13 @@ class ImageProcessing {
         return ret
     }
 
-    fun returnBitmap(bitmap: Bitmap): Bitmap {
-        return bitmap
-    }
+
 
     companion object {
-        private const val BATCH_SIZE = 1
-        private const val INPUT_SIZE = 224
-        private const val PIXEL_SIZE = 3
-        private const val FLOAT_TYPE_SIZE = 4
+        private const val BATCH_SIZE = InputModelSize.BATCH_SIZE
+        private const val INPUT_SIZE = InputModelSize.INPUT_SIZE
+        private const val PIXEL_SIZE = InputModelSize.PIXEL_SIZE
+        private const val FLOAT_TYPE_SIZE = InputModelSize.FLOAT_TYPE_SIZE
     }
+
 }

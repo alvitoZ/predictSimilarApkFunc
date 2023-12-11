@@ -3,6 +3,7 @@ package com.example.kitaikuyo.utils
 import android.content.Context
 import android.content.res.AssetManager
 import android.util.Log
+import com.example.kitaikuyo.InputModelSize
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import org.tensorflow.lite.Interpreter
@@ -99,7 +100,7 @@ class InterpreterInitialized(private val context: Context) {
         private const val FAILED_TAG = "FailedInterpreterInitialized"
         private const val SUCCESS_TAG = "SuccessInterpreterInitialized"
         private const val TAG = "InterpreterInitialized"
-        private const val MODEL_FILE = "model4.tflite"
+        private const val MODEL_FILE = InputModelSize.MODEL_FILE
         private const val numberThreads = 4
     }
 

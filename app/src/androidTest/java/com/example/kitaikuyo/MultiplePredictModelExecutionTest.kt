@@ -1,7 +1,6 @@
 package com.example.kitaikuyo
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.kitaikuyo.utils.ImageProcessing
 import com.example.kitaikuyo.utils.InterpreterInitialized
@@ -10,11 +9,10 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.tensorflow.lite.Interpreter
 import kotlin.system.measureTimeMillis
 
 
-class TestMultiplePredictModelExecution {
+class MultiplePredictModelExecutionTest {
 
     lateinit var interpreterInitialized : InterpreterInitialized;
 
